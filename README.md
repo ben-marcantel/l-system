@@ -15,3 +15,4 @@ the fern code iteration is as follows;
  start  : X
  rules  : (X → F[−X][X]F[−X]+FX), (F → FF)
 
+
