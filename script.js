@@ -4,11 +4,20 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const button = document.getElementById('button');
+const button1 = document.getElementById('button1');
+const slider = document.getElementById('slider');
+
+
+
+
+
 
 let currentString = "X";
 let nextString = "";
-
-
+let y = 10;
+let x = y/3;
+let lastPointY = [];
+let lastPointX = [];
 
 
 
@@ -24,58 +33,37 @@ let generate = ()=>{
     currentString += nextString;
 };
 
-
 let interpret = ()=>{
     for (let i =0; i<currentString.length; i++){
         let decoder = currentString.charAt(i);
         
-        let x = 0;
-        let y = 100;
-        let newX = x;
-        let newY = y;
-        let currentX = "";
-        let currentY = "";
-        
         if (decoder == "F"){ 
-            // F means "draw forward
-            c.restore(); 
-            c.lineTo(newX,newY);
-            c.save();
-
-            // c.closePath();
-            
+            c.closePath() 
+            y+=1
+            // console.log(slider.value)
+            c.lineTo(x,y+10)
+            lastPointY.push(y)
+            lastPointX.push(x)
         } else if (decoder == "X"){
-            // X does not correspond to any drawing action and is used to control the evolution of the curve. 
             
-            c.rotate((i * Math.PI)/ 180);
-            c.closePath();
-
         } else if (decoder == "+"){
-            // − means "turn left 25°"
-            newX = x;
-            newY = y + (y/2);
-            c.lineTo(newX,newY);
-            c.closePath();
-            c.rotate(-(45 * Math.PI / 180));
-            
+            c.rotate(26 * Math.PI/180)
+            c.lineTo(x-y,y+10)
+            lastPointY.push(y)
+            lastPointX.push(x)
         } else if (decoder == "-"){
-            // + means "turn right 25°"
-           
-            newX = x;
-            newY = y + (y/2);
-            c.lineTo(newX,newY);
-            c.closePath();
-            c.rotate(45 * Math.PI / 180);
             
+            c.rotate(-(24 * Math.PI/180))
+            c.lineTo(x+x,y+10)
+            lastPointY.push(y)
+            lastPointX.push(x)
             
         } else if (decoder == "["){
-            // The square bracket "[" corresponds to saving the current values for position and angle,
-            // c.save();
-        
+           c.lineTo(lastPointX.push(x),lastPointY.push(y))
+         
         } else (decoder == "]")
-        // which are restored when the corresponding "]" is executed
-            c.restore(); 
-            
+        c.lineTo(lastPointX.slice(),lastPointY.slice())
+       
     }   
 };
 
@@ -83,22 +71,39 @@ let interpret = ()=>{
 let draw = ()=>{
     console.log(currentString);
     c.beginPath();
-    // c.lineTo(canvas.width/2,canvas.height/2);
-    c.translate(canvas.width/2,canvas.height/2);   
     interpret();
     c.strokeStyle = "rgb(255,0,200)";
     c.stroke();
+    c.translate(canvas.height/(2/3),canvas.width/(3/4));
+    c.scale(1/2,1/2)
+    
+    
 };
 
 
 let magic = ()=>{
-    for (let i=0; i<1;i++){
+    for (let i=0; i<3;i++){
         generate(); 
         draw();
+        
     };
 };
 
+magic();
+const reset = ()=> {
+    currentString = ''
+}
 
-button.addEventListener("click", magic);
+const sliderVal= ()=>{    
+    c.setTransform(1,0,0,1,0,0);
+    reset();
+    generate()
+    draw()
+    // c.translate(canvas.height/(2/3),canvas.width/(3/4));
+    
+}
+
+slider.addEventListener("input", sliderVal());
+
 
  
