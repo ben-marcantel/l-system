@@ -1,31 +1,17 @@
 const canvas = document.getElementById('canvas');
 const c = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const button = document.getElementById('button');
-const button1 = document.getElementById('button1');
-const slider = document.getElementById('slider');
-
-
-
-
+canvas.width = 1080;
+canvas.height = 720;
 
 
 let currentString = "X";
 let nextString = "";
-let y = 10;
-let x = y/3;
-let lastPointY = [];
-let lastPointX = [];
-
-
 
 let generate = ()=>{
     for (let i = 0; i<currentString.length; i++){
         let chAt = currentString.charAt(i);
         if (chAt == "X"){
-            nextString += "F[-X][X]F[-X]+FX";
+            nextString += "F---[-X][X]+F--++F[-X]+FX";
         } else if (chAt == "F"){
             nextString += "FF";
         }
@@ -33,56 +19,44 @@ let generate = ()=>{
     currentString += nextString;
 };
 
+c.translate(canvas.height/2,canvas.width/2);
 let interpret = ()=>{
     for (let i =0; i<currentString.length; i++){
         let decoder = currentString.charAt(i);
-        
-        if (decoder == "F"){ 
-            c.closePath() 
-            y+=1
-            // console.log(slider.value)
-            c.lineTo(x,y+10)
-            lastPointY.push(y)
-            lastPointX.push(x)
+        if (decoder == "F"){  
+            c.beginPath();
+            c.moveTo(0,1);
+            c.lineTo(0,40/6);
+            c.strokeStyle = "rgb(0,20,240)";            
+            c.stroke();
+            c.translate(0,40/6)
         } else if (decoder == "X"){
-            
+            //nothing here only effects growth over time
         } else if (decoder == "+"){
-            c.rotate(26 * Math.PI/180)
-            c.lineTo(x-y,y+10)
-            lastPointY.push(y)
-            lastPointX.push(x)
+            c.rotate(26 * Math.PI/180)   
+            c.strokeStyle = "rgb(40,40,250)";            
+            c.stroke();         
         } else if (decoder == "-"){
-            
-            c.rotate(-(24 * Math.PI/180))
-            c.lineTo(x+x,y+10)
-            lastPointY.push(y)
-            lastPointX.push(x)
-            
+            c.rotate(-26 * Math.PI/180)    
+            c.strokeStyle = "rgb(40,60,220)";            
+            c.stroke();        
         } else if (decoder == "["){
-           c.lineTo(lastPointX.push(x),lastPointY.push(y))
-         
+            c.save();
+             
         } else (decoder == "]")
-        c.lineTo(lastPointX.slice(),lastPointY.slice())
-       
+            c.restore();
+            
     }   
 };
-
 
 let draw = ()=>{
     console.log(currentString);
     c.beginPath();
     interpret();
-    c.strokeStyle = "rgb(255,0,200)";
-    c.stroke();
-    c.translate(canvas.height/(2/3),canvas.width/(3/4));
-    c.scale(1/2,1/2)
-    
-    
 };
 
-
 let magic = ()=>{
-    for (let i=0; i<3;i++){
+    for (let i=0; i<5;i++){
         generate(); 
         draw();
         
@@ -90,20 +64,7 @@ let magic = ()=>{
 };
 
 magic();
-const reset = ()=> {
-    currentString = ''
-}
 
-const sliderVal= ()=>{    
-    c.setTransform(1,0,0,1,0,0);
-    reset();
-    generate()
-    draw()
-    // c.translate(canvas.height/(2/3),canvas.width/(3/4));
-    
-}
-
-slider.addEventListener("input", sliderVal());
 
 
  
